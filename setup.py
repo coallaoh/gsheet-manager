@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="gsheet-manager",
-    version="0.1.0",
+    version="0.2.0",
     author="Seong Joon Oh",
     author_email="coallaoh@gmail.com",
     description="A Google Sheets manager for Python",
