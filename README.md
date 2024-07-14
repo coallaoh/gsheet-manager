@@ -22,17 +22,42 @@ Here's a basic example of how to use GSheetManager:
 ```python
 from gsheet_manager import GSheetManager
 
-# Initialize the manager
-manager = GSheetManager('path/to/key_file.json', 'Your Google Sheet Name', 'Your Worksheet Name')
+class MySheetManager(GSheetManager):
+    @GSheetManager.batch_sync_with_remote
+    def update_sales_data(self, product, quantity, price):
+        # Find the row for the product
+        product_column = 0
+        quantity_column = 1
+        price_column = 2
+        total_column = 3
 
-# Use the batch_sync_with_remote decorator for operations
-@GSheetManager.batch_sync_with_remote
-def update_sheet(manager):
-    # Your operations here
-    manager._set_buffer_cells(0, 0, "New Value")
+        for row, row_data in enumerate(self.local_sheet_values):
+            if row_data[product_column] == product:
+                # Update quantity
+                self._set_buffer_cells(row, quantity_column, quantity)
+                
+                # Update price
+                self._set_buffer_cells(row, price_column, price)
+                
+                # Calculate and update total
+                total = quantity * price
+                self._set_buffer_cells(row, total_column, total)
+                
+                print(f"Updated {product}: Quantity={quantity}, Price=${price}, Total=${total}")
+                return
 
-# Run your function
-update_sheet(manager)
+        # If product not found, add a new row
+        new_row = len(self.local_sheet_values)
+        self._set_buffer_cells(new_row, product_column, product)
+        self._set_buffer_cells(new_row, quantity_column, quantity)
+        self._set_buffer_cells(new_row, price_column, price)
+        self._set_buffer_cells(new_row, total_column, quantity * price)
+        print(f"Added new product {product}: Quantity={quantity}, Price=${price}, Total=${quantity * price}")
+
+# Usage
+manager = MySheetManager('path/to/key_file.json', 'Sales Sheet', 'Product Data')
+manager.update_sales_data('Widget A', 100, 19.99)
+manager.update_sales_data('Gadget B', 50, 24.99)
 ```
 
 ## Features
