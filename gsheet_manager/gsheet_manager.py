@@ -56,7 +56,7 @@ class GSheetManager(object):
         if max_gsheet_row_idx > remote_num_rows:
             self._worksheet.add_rows(max_gsheet_row_idx - remote_num_rows + 100)
         if max_gsheet_col_idx > remote_num_cols:
-            self._worksheet.add_cols(max_gsheet_row_idx - remote_num_rows + 100)
+            self._worksheet.add_cols(max_gsheet_col_idx - remote_num_cols + 100)
 
         self._worksheet.update_cells(self.buffer_cells)
         self.buffer_cells = []
