@@ -16,6 +16,7 @@ class GSheetManager(object):
         self._worksheet_time = time.time()
         self.buffer_cells = []
         self.local_sheet_values = []
+        self.local_note_values = []
 
     def _get_worksheet(self):
         gc = gspread.service_account(filename=self.key_file)
@@ -44,6 +45,10 @@ class GSheetManager(object):
 
     def sync_from_remote(self):
         self.local_sheet_values = self._worksheet.get_all_values()
+        notes_array = self._worksheet.get_notes()
+        self.local_note_values = gspread.utils.fill_gaps(notes_array,
+                                                         len(self.local_sheet_values),
+                                                         max(len(row) for row in self.local_sheet_values))
 
     def batch_update_remote(self):
         if len(self.buffer_cells) == 0:
